@@ -26,14 +26,12 @@ namespace vrisian
             PngBitmapDecoder decoder = new PngBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
             BitmapSource bmp = decoder.Frames[0];
 
-            int width = bmp.PixelWidth;
-            int height = bmp.PixelHeight;
-            Source = new Pixel[width, height];
+
+            Source = new Pixel[bmp.PixelWidth, bmp.PixelHeight];
             format = bmp.Format;
 
-            var BytesPerPixel = format.BitsPerPixel / 8;
 
-            byte[] FlattenedSource = new byte[Stride * height];
+            byte[] FlattenedSource = new byte[Stride * Height];
             bmp.CopyPixels(FlattenedSource, Stride, 0);
 
             for (int i = 0; i < FlattenedSource.Length / BytesPerPixel; i++)
@@ -41,23 +39,24 @@ namespace vrisian
                 byte[] b = new byte[4] { 0, 0, 0, 255 };
                 Array.ConstrainedCopy(FlattenedSource, i * BytesPerPixel, b, 0, BytesPerPixel);
 
-                int x = i % width;
-                int y = (int) Math.Floor(i / width + 0d);
+                int x = i % Width;
+                int y = (int) Math.Floor(i / Width + 0d);
 
                 Source[x, y] = new Pixel(b[2], b[1], b[0], b[3]);
             }
         }
 
-        public ByteImage(Pixel[,] source, object f = null)
+        public ByteImage(Pixel[,] source, object pixelformat = null)
         {
+            Source = new Pixel[source.GetLength(0), source.GetLength(1)];
             Source = source;
-            if (f == null)
-            {
-                format = PixelFormats.Pbgra32;
-            } else
-            {
-                format = (PixelFormat) f;
-            }
+            format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat) pixelformat;
+        }
+
+        public ByteImage(int width, int height, object pixelformat = null)
+        {
+            Source = new Pixel[width, height];
+            format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat) pixelformat;
         }
 
         public void Save()
@@ -69,17 +68,19 @@ namespace vrisian
             //}
         }
 
-        public void SetPixel(int x, int y, Pixel color)
+        public bool SetPixel(int x, int y, Pixel color)
         {
-            Source[x, y] = color;
+            if (x >= 0 && x < Width && y >= 0 && y < Height)
+            {
+                Source[x, y] = color;
+                return true;
+            }
+            return false;
         }
 
-        public void Scale(int scale)
+        public bool SetPixel(XY xy, Pixel color)
         {
-            //foreach (byte row in Source)
-            //{
-
-            //}
+            return SetPixel(xy.X, xy.Y, color);
         }
 
         public byte[] ToFlattened()
@@ -98,48 +99,43 @@ namespace vrisian
             return flattened;
         }
 
+        public void Blit(ByteImage img, int offsetX = 0, int offsetY = 0)
+        {
+            for (int x = 0; x < img.Width; x++)
+            {
+                for (int y = 0; y < img.Height; y++)
+                {
+                    if (img.Source[x, y].A != 0)
+                    {
+                        Source[x + offsetX, y + offsetY] = img.Source[x, y];
+                    }
+                }
+            }
+
+        }
+
+        public void ForEachPixel(Action<int, int> func)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    func(x, y);
+                }
+            }
+        }
+
+        public ByteImage Copy()
+        {
+            return new ByteImage(Source, Format);
+        }
+
         public BitmapSource ToBitmap()
         {
             var rgb = new BitmapPalette(new List<Color> { Colors.Red, Colors.Green, Colors.Blue });
-            return BitmapSource.Create(Height, Width, 300, 300, Format, rgb, ToFlattened(), Stride);
+            return BitmapSource.Create(Width, Height, 300d, 300d, Format, rgb, ToFlattened(), Stride);
         }
     }
 
-    public struct Pixel
-    {
-        public Pixel(byte r, byte g, byte b, byte a = 255)
-        {
-            R = r;
-            G = g;
-            B = b;
-            A = a;
-        }
-
-        public byte R { get; set; }
-        public byte G { get; set; }
-        public byte B { get; set; }
-        public byte A { get; set; }
-
-        public override string ToString() => $"{R}, {G}, {B}, {A}";
-
-        public byte[] ToByteArray(Boolean IncludeAlpha)
-        {
-            byte[] output;
-            
-            if (IncludeAlpha)
-            {
-                output = new byte[4];
-                output[3] = A;
-            } else
-            {
-                output = new byte[3];
-            }
-
-            output[0] = B;
-            output[1] = G;
-            output[2] = R;
-
-            return output;
-        }
-    }
+    
 }

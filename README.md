@@ -8,16 +8,19 @@ The word `vrisian` is completely made-up, by the way.
 
 ## TODO:
 
+### Bugs
+
 ### General
  - New files (gui)
  - Rename files (gui)
  - Delete files (gui)
+ - Moving files (gui)
  - Export menu
    - Options
-     - Scaled up
+     - Scaled up (Gif of animtions)
      - Before / After
      - Tiled
-     - All pngs stitched (animations too)
+     - All pngs stitched (animations: gif)
    - Copy to clipboard
  - Generators
    - Chime Format new item (gui)
@@ -27,9 +30,13 @@ The word `vrisian` is completely made-up, by the way.
    - New animation (gui)
      - [Wiki](https://minecraft.fandom.com/wiki/Resource_Pack#Animation)
    - New resource pack (gui: version)
+ - Style
+ - Add Image Editor undo 
+
+### Technical
+ - Make ImageEditor and TextEditor non static with some manager
 
 ### Text Editor
- - Fix line numbers not scrolling
  - Find and replace (regex)
  - Syntax Highlighting
 

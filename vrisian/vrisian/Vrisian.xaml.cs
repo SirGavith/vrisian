@@ -10,21 +10,23 @@ namespace vrisian
 {
     public partial class MainWindow : Window
     {
-        public float Zoom = 1f;
-        public float MinZoom = 0.09f;
         public MainWindow()
         {
             InitializeComponent();
             TextEditor.Textbox = TextEditorTextbox;
-            TextEditor.LineNumbers = TextLineNumbers;
-            TextEditor.Zoom = Zoom;
+            TextEditor.LineNumbers = TextEditorLineNumbers;
             ImageEditor.Canvas = ImageEditorCanvas;
-            ImageEditor.AnimationBar = AnimationBar;
+            ImageEditor.AnimationBar = ImageEditorAnimationBar;
             ImageEditor.ColorPicker = ImageEditorColorPicker;
             ImageEditor.SelectedColorViewer = ImageEditorSelectedColorViewer;
-            ImageEditor.CanvasBackground = ImageEditorCanvasBackground;
-            ImageEditor.Zoom = Zoom;
+            ImageEditor.scroll = ImageEditorCanvasScrollViewer;
+            ImageEditor.ZoomBorder = ImageEditorBorder;
+
+            TextEditor.Zoom = Zoom;
         }
+
+        public double Zoom = 1;
+        public double MinZoom = 0.09;
 
         private void buttonOpen_Click(object sender, RoutedEventArgs e)
         {
@@ -53,27 +55,21 @@ namespace vrisian
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (TextEditor.IsOpen)
-            {
-                TextEditor.CloseEditor();
-            }
-            if (ImageEditor.IsOpen)
-            {
-                ImageEditor.CloseEditor();
-            }
+            TextEditor.CloseEditor();
+            ImageEditor.CloseEditor();
         }
 
         private void zoomInButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateZoom(0.1f);
+            UpdateZoom(0.1, false);
         }
 
         private void zoomOutButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateZoom(-0.1f);
+            UpdateZoom(-0.1, false);
         }
 
-        private void UpdateZoom(float change)
+        public void UpdateZoom(double change, bool usemousecentered)
         {
             if (Zoom + change < MinZoom)
             {
@@ -81,11 +77,8 @@ namespace vrisian
             }
             Zoom += change;
             TextEditor.Zoom = Zoom;
-            ImageEditor.Zoom = Zoom;
-            ImageEditor.RefreshImage();
+            ImageEditor.SetZoom(Zoom, usemousecentered);
             zoomLabel.Text = $"{Math.Round(100 * Zoom)}%";
         }
-
-        
     }
 }
