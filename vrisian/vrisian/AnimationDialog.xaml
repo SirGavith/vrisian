@@ -1,0 +1,84 @@
+﻿<Window x:Class="vrisian.AnimationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:vrisian"
+        Title="Animation Options"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.Resources>
+            <!-- Default settings for controls -->
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="Margin" Value="0,3,5,5" />
+                <Setter Property="Padding" Value="0,0,0,5" />
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+            </Style>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Margin" Value="0,0,0,5" />
+                <!--<Setter Property="Width" Value="25"/>-->
+            </Style>
+            <Style TargetType="{x:Type CheckBox}">
+                <!--<Setter Property="HorizontalAlignment" Value="Center" />-->
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="5,0,0,0" />
+            </Style>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Width" Value="70" />
+                <Setter Property="Height" Value="25" />
+                <Setter Property="Margin" Value="5,0,0,0" />
+            </Style>
+        </Grid.Resources>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" Name="FrameTimeRow"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+
+        <local:AnimationViewer Grid.RowSpan="7" x:Name="Viewer" Margin="10" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        
+        <Label Grid.Column="1" Grid.Row="0" Content="Interpolate:"/>
+        <CheckBox Name="OptionInterpolate" Grid.Column="2" Grid.Row="0" Checked="OptionInterpolate_Checked" Unchecked="OptionInterpolate_Unchecked"/>
+        
+        <Label Grid.Column="1" Grid.Row="1" Content="Frametime (ticks):"/>
+        <TextBox Name="FrameTime" Grid.Column="2" Grid.Row="1" TextChanged="FrameTime_TextChanged"/>
+
+        <Label Grid.Column="1" Grid.Row="2" Content="Frame Width*:"/>
+        <TextBox Name="OptionWidth" Grid.Column="2" Grid.Row="2" TextChanged="OptionWidth_TextChanged"/>
+
+        <Label Grid.Column="1" Grid.Row="3" Content="Frame Height*:"/>
+        <TextBox Name="OptionHeight" Grid.Column="2" Grid.Row="3" TextChanged="OptionHeight_TextChanged"/>
+
+        <Label Grid.Column="1" Grid.Row="4" Content="Use Advanced"/>
+        <CheckBox Name="OptionAdvanced" Grid.Column="2" Grid.Row="4" Checked="OptionAdvanced_Checked" Unchecked="OptionAdvanced_Unchecked"/>
+
+        <ScrollViewer Name="FrameListViewer" VerticalScrollBarVisibility="Auto" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Visibility="Collapsed">
+            <StackPanel >
+                <Label Grid.Column="0" Grid.Row="0" Content="Frames" HorizontalAlignment="Center"/>
+                <StackPanel Name="FrameList"/>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- Bottom Row -->
+        <TextBlock Grid.Column="1" Grid.Row="6" TextWrapping="Wrap" Text="*Frame Width and Height act as a ratio"/>
+        <StackPanel Grid.Column="2" Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="ButtonSave" Click="ButtonSave_Click" IsDefault="True" Content="Save"/>
+            <Button Name="ButtonCancel" Click="ButtonCancel_Click" IsCancel="True" Content="Cancel"/>
+        </StackPanel>
+
+    </Grid >
+</Window>

@@ -9,6 +9,9 @@ The word `vrisian` is completely made-up, by the way.
 ## TODO:
 
 ### Bugs
+ - Zooming in the Image Editor does not go to the middle / mouse like it should
+ - Editors are not closing like they should be sometimes causing an exception to program close
+ - Animation loops backwards
 
 ### General
  - New files (gui)
@@ -17,7 +20,7 @@ The word `vrisian` is completely made-up, by the way.
  - Moving files (gui)
  - Export menu
    - Options
-     - Scaled up (Gif of animtions)
+     - Scaled up (Gif of animations )
      - Before / After
      - Tiled
      - All pngs stitched (animations: gif)
@@ -30,18 +33,18 @@ The word `vrisian` is completely made-up, by the way.
    - New animation (gui)
      - [Wiki](https://minecraft.fandom.com/wiki/Resource_Pack#Animation)
    - New resource pack (gui: version)
- - Style
- - Add Image Editor undo 
+ - Style 
 
 ### Technical
- - Make ImageEditor and TextEditor non static with some manager
 
 ### Text Editor
  - Find and replace (regex)
+ - Show Tabs
  - Syntax Highlighting
 
 ### Image Editor
  - Image saving
+ - Undo / Redo
  - Editor Tools (cursor)
    - Pencil (default)
    - Selection
@@ -51,10 +54,8 @@ The word `vrisian` is completely made-up, by the way.
  - Tool options (size)
  - Pallette
  - Image Copy/Paste
- - Recognise files with .mcmeta as animations
  - Image Animation
-   - Frame viewer
-   - New Frame Button
+   - Edit mcmeta for new frame ( only if "frames" is specified)
    - Frametime editor
    - Interpolate option
    - Preview animation

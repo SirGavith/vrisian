@@ -13,22 +13,31 @@ namespace vrisian
         public MainWindow()
         {
             InitializeComponent();
-            TextEditor.Textbox = TextEditorTextbox;
-            TextEditor.LineNumbers = TextEditorLineNumbers;
-            ImageEditor.Canvas = ImageEditorCanvas;
-            ImageEditor.AnimationBar = ImageEditorAnimationBar;
-            ImageEditor.ColorPicker = ImageEditorColorPicker;
-            ImageEditor.SelectedColorViewer = ImageEditorSelectedColorViewer;
-            ImageEditor.scroll = ImageEditorCanvasScrollViewer;
-            ImageEditor.ZoomBorder = ImageEditorBorder;
 
-            TextEditor.Zoom = Zoom;
+            new CustomCommand(Key.N, ModifierKeys.Control,
+                (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.AddNewFrame(),
+                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
+            );
+            new CustomCommand(Key.R, ModifierKeys.Control,
+                (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.Refresh(),
+                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image)
+            );
+            new CustomCommand(Key.Left, ModifierKeys.None,
+                (object sender, ExecutedRoutedEventArgs e) => { EditorManager.Current.NextFrame(); MessageBox.Show("Custom Command Executed"); },
+                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
+            );
+            new CustomCommand(Key.T, ModifierKeys.Control, 
+                (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.PreviousFrame(), 
+                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
+            );
         }
+
+        public EditorManager EditorManager = new EditorManager();
 
         public double Zoom = 1;
         public double MinZoom = 0.09;
 
-        private void buttonOpen_Click(object sender, RoutedEventArgs e)
+        private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog
             {
@@ -55,29 +64,34 @@ namespace vrisian
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            TextEditor.CloseEditor();
-            ImageEditor.CloseEditor();
+            EditorManager.CloseAll();
         }
 
-        private void zoomInButton_Click(object sender, RoutedEventArgs e)
+        private void ButtonZoomIn_Click(object sender, RoutedEventArgs e)
         {
             UpdateZoom(0.1, false);
         }
 
-        private void zoomOutButton_Click(object sender, RoutedEventArgs e)
+        private void ButtonZoomOut_Click(object sender, RoutedEventArgs e)
         {
             UpdateZoom(-0.1, false);
         }
 
-        public void UpdateZoom(double change, bool usemousecentered)
+        public void UpdateZoom(double change, bool usemousecentered, double multiplier = 1)
         {
-            if (Zoom + change < MinZoom)
+            Zoom *= multiplier;
+            if (Zoom < MinZoom)
+            {
+                Zoom = MinZoom;
+            }
+            if (change < 0 && Zoom + change < MinZoom)
             {
                 return;
             }
             Zoom += change;
-            TextEditor.Zoom = Zoom;
-            ImageEditor.SetZoom(Zoom, usemousecentered);
+
+            EditorManager.Current.SetZoom(Zoom, usemousecentered);
+
             zoomLabel.Text = $"{Math.Round(100 * Zoom)}%";
         }
     }

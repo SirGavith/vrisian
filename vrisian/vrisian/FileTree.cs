@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 
@@ -20,30 +21,30 @@ namespace vrisian
 
             openFilePathLabel.Text = selectedItem.SubPath;
 
-            TextEditorGrid.Visibility = Visibility.Collapsed;
-            if (TextEditor.IsOpen)
-            {
-                TextEditor.CloseEditor();
-            }
-            ImageEditorGrid.Visibility = Visibility.Collapsed;
-            if (ImageEditor.IsOpen)
-            {
-                ImageEditor.CloseEditor();
-            }
+            
+            //TODO: multiple editors
+            EditorManager.CloseCurrent();
 
-            if (new Regex(@"\.(txt|json)").IsMatch(selectedItem.Name))
+            string[] TextEditorFormats = new string[] { "txt", "json", "mcmeta" };
+            string[] ImageEditorFormats = new string[] { "png" };
+
+            string Format = selectedItem.Name.Split(new char[] { '.' }).Last().ToLower();
+
+            if (TextEditorFormats.Contains(Format))
             {
                 //text file
-                TextEditorGrid.Visibility = Visibility.Visible;
-
-                TextEditor.OpenEditor(selectedItem);
+                EditorManager.Create(new TextEditor(selectedItem));
+                
             }
-            else if (new Regex(@"\.(png)").IsMatch(selectedItem.Name))
+            else if (ImageEditorFormats.Contains(Format))
             {
                 //image file
-                ImageEditorGrid.Visibility = Visibility.Visible;
-
-                ImageEditor.OpenEditor(selectedItem);
+                EditorManager.Create(new ImageEditor(selectedItem));
+            }
+            else
+            {
+                
+                MessageBox.Show($"The format .{Format} cannot be understood or is not supported");
             }
         }
     }

@@ -9,15 +9,12 @@ namespace vrisian
 {
     public class ByteImage
     {
-        public Pixel[,] Source { get; }
-        private PixelFormat format = new PixelFormat();
-
+        public Pixel[,] Source { get; private set; }
+        public PixelFormat Format { get; private set; } = new PixelFormat();
 
         public int Width { get { return Source.GetLength(0); } }
         public int Height { get { return Source.GetLength(1); } }
-
-        public PixelFormat Format { get { return format; }}
-        public int BytesPerPixel { get { return format.BitsPerPixel / 8;  } }
+        public int BytesPerPixel { get { return Format.BitsPerPixel / 8; } }
         public int Stride { get { return Width * BytesPerPixel; } }
 
         public ByteImage(string path)
@@ -28,7 +25,7 @@ namespace vrisian
 
 
             Source = new Pixel[bmp.PixelWidth, bmp.PixelHeight];
-            format = bmp.Format;
+            Format = bmp.Format;
 
 
             byte[] FlattenedSource = new byte[Stride * Height];
@@ -50,13 +47,19 @@ namespace vrisian
         {
             Source = new Pixel[source.GetLength(0), source.GetLength(1)];
             Source = source;
-            format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat) pixelformat;
+            Format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat) pixelformat;
         }
 
         public ByteImage(int width, int height, object pixelformat = null)
         {
             Source = new Pixel[width, height];
-            format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat) pixelformat;
+            Format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat) pixelformat;
+        }
+
+        public ByteImage(XY size, object pixelformat = null)
+        {
+            Source = new Pixel[size.X, size.Y];
+            Format = pixelformat == null ? PixelFormats.Pbgra32 : (PixelFormat)pixelformat;
         }
 
         public void Save()
@@ -81,6 +84,24 @@ namespace vrisian
         public bool SetPixel(XY xy, Pixel color)
         {
             return SetPixel(xy.X, xy.Y, color);
+        }
+
+        public void Reshape(XY size) => Reshape(size.X, size.Y);
+
+        public void Reshape(int sizeX, int sizeY)
+        {
+            if (sizeX <= 0 || sizeY <= 0)
+            {
+                throw new ArgumentOutOfRangeException("size must be a positive integer");
+            }
+            Pixel[,] NewSource = new Pixel[sizeX, sizeY];
+            ForEachPixel((x, y) => {
+                if (x < sizeX && y < sizeY)
+                {
+                    NewSource[x, y] = Source[x, y];
+                }
+            });
+            Source = NewSource;
         }
 
         public byte[] ToFlattened()
@@ -125,6 +146,11 @@ namespace vrisian
             }
         }
 
+        public void ForEachPixel(Action<XY> func)
+        {
+            ForEachPixel((x, y) => func(new XY(x, y)));
+        }
+
         public ByteImage Copy()
         {
             return new ByteImage(Source, Format);
@@ -136,6 +162,4 @@ namespace vrisian
             return BitmapSource.Create(Width, Height, 300d, 300d, Format, rgb, ToFlattened(), Stride);
         }
     }
-
-    
 }
