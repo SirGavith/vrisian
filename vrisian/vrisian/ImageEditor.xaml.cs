@@ -339,7 +339,7 @@ namespace vrisian
         {
             var AnimCopy = Anim.Copy();
 
-            var Dialog = new AnimationDialog(Anim);
+            var Dialog = new AnimationOptionsDialog(Anim);
             bool? Result = Dialog.ShowDialog();
             if (Result == true)
             {

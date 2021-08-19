@@ -109,7 +109,7 @@
     <Compile Include="AnimationViewerDialog.xaml.cs">
       <DependentUpon>AnimationViewerDialog.xaml</DependentUpon>
     </Compile>
-    <Page Include="AnimationDialog.xaml">
+    <Page Include="AnimationOptionsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -134,8 +134,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Animation.cs" />
-    <Compile Include="AnimationDialog.xaml.cs">
-      <DependentUpon>AnimationDialog.xaml</DependentUpon>
+    <Compile Include="AnimationOptionsDialog.xaml.cs">
+      <DependentUpon>AnimationOptionsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="AnimationFrameGrid.xaml.cs">
       <DependentUpon>AnimationFrameGrid.xaml</DependentUpon>

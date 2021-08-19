@@ -46,7 +46,7 @@ namespace vrisian
 
             if (Anim.Interpolate)
             {
-                double Delta = 1D - (double)TimeToNext / CurrentFrame.Time;
+                double Delta = (double)TimeToNext / CurrentFrame.Time;
 
                 Sprite.ForEachPixel(XY =>
                 {

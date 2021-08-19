@@ -4,13 +4,13 @@ using System.Windows.Controls;
 
 namespace vrisian
 {
-    public partial class AnimationDialog : Window
+    public partial class AnimationOptionsDialog : Window
     {
         public bool Advanced { get; private set; }
 
         private Animation Anim;
 
-        public AnimationDialog(Animation A)
+        public AnimationOptionsDialog(Animation A)
         {
             InitializeComponent();
 

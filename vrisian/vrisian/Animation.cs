@@ -130,17 +130,16 @@ namespace vrisian
 
         public Animation Copy()
         {
-            var Anim = new Animation(SourceImage.Copy());
-
-            Anim.Frames = Frames.ToArray().ToList();
-            Anim.CurrentSpriteIndex = CurrentSpriteIndex + 0;
-            Anim.Interpolate = !!Interpolate;
-            Anim.FrameTime = FrameTime + 0;
-            Anim.MCMetaPath = MCMetaPath + "";
-            Anim.SpriteCount = SpriteCount + 0;
-            Anim.SpriteSizeRatio = new XY(SpriteSizeRatio.X + 0, SpriteSizeRatio.Y + 0);
-            
-            return Anim;
+            return new Animation(SourceImage.Copy())
+            {
+                Frames = Frames.ToArray().ToList(),
+                CurrentSpriteIndex = CurrentSpriteIndex,
+                Interpolate = !!Interpolate,
+                FrameTime = FrameTime,
+                MCMetaPath = MCMetaPath,
+                SpriteCount = SpriteCount,
+                SpriteSizeRatio = new XY(SpriteSizeRatio.X, SpriteSizeRatio.Y)
+            };
         }
     }
 
