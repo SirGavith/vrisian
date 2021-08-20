@@ -14,6 +14,10 @@ namespace vrisian
         {
             InitializeComponent();
 
+            new CustomCommand(Key.O, ModifierKeys.Control,
+                (object sender, ExecutedRoutedEventArgs e) => ButtonOpen_Click()
+            );
+
             new CustomCommand(Key.N, ModifierKeys.Control,
                 (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.AddNewFrame(),
                 (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
@@ -23,7 +27,7 @@ namespace vrisian
                 (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image)
             );
             new CustomCommand(Key.Left, ModifierKeys.None,
-                (object sender, ExecutedRoutedEventArgs e) => { EditorManager.Current.NextFrame(); MessageBox.Show("Custom Command Executed"); },
+                (object sender, ExecutedRoutedEventArgs e) => { EditorManager.Current.NextFrame(); },
                 (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
             );
             new CustomCommand(Key.T, ModifierKeys.Control, 
@@ -37,7 +41,7 @@ namespace vrisian
         public double Zoom = 1;
         public double MinZoom = 0.09;
 
-        private void ButtonOpen_Click(object sender, RoutedEventArgs e)
+        private void ButtonOpen_Click(object sender = null, RoutedEventArgs e = null)
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog
             {

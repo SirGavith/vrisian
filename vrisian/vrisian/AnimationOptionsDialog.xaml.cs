@@ -8,7 +8,7 @@ namespace vrisian
     {
         public bool Advanced { get; private set; }
 
-        private Animation Anim;
+        private readonly Animation Anim;
 
         public AnimationOptionsDialog(Animation A)
         {

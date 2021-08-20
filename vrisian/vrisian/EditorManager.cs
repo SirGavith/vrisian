@@ -30,12 +30,14 @@ namespace vrisian
             if (Current == null|| OpenEditors.Count == 0) { return; }
             Current?.CloseEditor();
             Utils.Window.MainGrid.Children.Remove(OpenEditors[CurrentEditorIndex]);
+            OpenEditors.RemoveAt(CurrentEditorIndex);
             CurrentEditorIndex = OpenEditors.Count == 0 ? 0 : OpenEditors.Count - 1;
         }
 
         public void CloseAll()
         {
             OpenEditors.ForEach(e => ((IEditor)e).CloseEditor());
+            OpenEditors.Clear();
             Utils.Window?.MainGrid.Children.Clear();
         }
     }
@@ -49,20 +51,13 @@ namespace vrisian
 
         void Refresh();
         void SetZoom(double Zoom, bool mousecentered);
-        void OnMouseTrigger(object s, MouseEventArgs e);
 
         void PreviousFrame();
         void NextFrame();
         void AddNewFrame();
-        //void LoadAsAnimation();
-        //void AnimationOn();
-        //void AnimationOff();
-        //void TilingOn();
-        //void TilingOff();
+
         bool ShouldAnimate { get; }
         bool ShouldTile { get; }
-
-        void TextChanged(RichTextBox sender);
     }
 
     public enum Editors

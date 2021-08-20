@@ -24,10 +24,10 @@ namespace vrisian
             InitializeComponent();
             OpenEditor(file);
         }
-        public TextEditor()
-        {
-            InitializeComponent();
-        }
+        //public TextEditor()
+        //{
+        //    InitializeComponent();
+        //}
 
         public void OpenEditor(DirectoryItem file)
         {
@@ -47,7 +47,6 @@ namespace vrisian
                 TextRange range = new TextRange(Textbox.Document.ContentStart, Textbox.Document.ContentEnd);
                 range.Save(fileStream, DataFormats.Text);
             }
-            OpenFile = null;
         }
 
         public void SetZoom(double zoom, bool mousecentered)

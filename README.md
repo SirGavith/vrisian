@@ -11,6 +11,7 @@ The word `vrisian` is completely made-up, by the way.
 ### Bugs
  - Zooming in the Image Editor does not go to the middle / mouse like it should
  - Editors are not closing like they should be sometimes causing an exception to program close
+ - You can try to open a folder as a file lol
 
 ### General
  - New files (gui)
@@ -35,6 +36,7 @@ The word `vrisian` is completely made-up, by the way.
  - Style 
 
 ### Technical
+ - Make AnimationViewer Calculations be on a different thread
 
 ### Text Editor
  - Find and replace (regex)

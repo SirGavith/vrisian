@@ -161,11 +161,12 @@ namespace vrisian
 
         public static Pixel Lerp(double Delta, Pixel Dest, Pixel Source)
         {
-            var P = new Pixel();
-            P.R = (byte)Utils.Lerp(Delta, Dest.R, Source.R);
-            P.G = (byte)Utils.Lerp(Delta, Dest.G, Source.G);
-            P.B = (byte)Utils.Lerp(Delta, Dest.B, Source.B);
-            P.A = (byte)Utils.Lerp(Delta, Dest.A, Source.A);
+            var P = new Pixel(
+                (byte)Utils.Lerp(Delta, Dest.R, Source.R),
+                (byte)Utils.Lerp(Delta, Dest.G, Source.G),
+                (byte)Utils.Lerp(Delta, Dest.B, Source.B),
+                (byte)Utils.Lerp(Delta, Dest.A, Source.A)
+            );
             return P;
         }
 

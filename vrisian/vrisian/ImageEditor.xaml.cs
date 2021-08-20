@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,6 +16,7 @@ namespace vrisian
         public Editors Type { get; } = Editors.Image;
 
         public DirectoryItem OpenFile;
+        private List<CustomCommand> Commands = new List<CustomCommand>() { };
 
         public ByteImage Img;
 
@@ -54,6 +55,10 @@ namespace vrisian
 
             Img = new ByteImage(file.FullPath);
 
+            Commands.Add(new CustomCommand(Key.W, ModifierKeys.Control,
+                (object sender, ExecutedRoutedEventArgs e) => MessageBox.Show("triggered")
+            ));
+
             //look for .mcmeta
             if (File.Exists(OpenFile.FullPath + ".mcmeta"))
             {
@@ -65,11 +70,13 @@ namespace vrisian
         public void PreviousFrame()
         {
             Anim.PreviousFrame();
+            Refresh();
         }
 
         public void NextFrame()
         {
             Anim.NextFrame();
+            Refresh();
         }
 
         public void AddNewFrame()
@@ -110,7 +117,8 @@ namespace vrisian
         public void CloseEditor()
         {
             Img.Save();
-            Anim.SaveMCMeta();
+            Anim?.SaveMCMeta();
+            Commands.ForEach((CustomCommand C) => C.Remove());
         }
 
         public void OnMouseTrigger(object s, MouseEventArgs e)
@@ -213,9 +221,6 @@ namespace vrisian
                 OptionAnimate.IsChecked = false;
                 return;
             }
-
-            AnimationBarGridSplitter.Height = new GridLength(5);
-            AnimationBar.Height = new GridLength(1, GridUnitType.Star);
             SetAnimationBar();
             Refresh();
         }
@@ -223,8 +228,6 @@ namespace vrisian
         public void AnimationOff()
         {
             ShouldAnimate = false;
-            AnimationBarGridSplitter.Height = new GridLength(0);
-            AnimationBar.Height = new GridLength(0);
 
             Refresh();
         }
@@ -243,16 +246,19 @@ namespace vrisian
             Utils.CurrentWindow.UpdateZoom(0, false, 1d / 3d);
         }
 
-        public void TextChanged(RichTextBox sender) { }
 
 
         public void OptionAnimate_Checked(object sender = null, RoutedEventArgs e = null)
         {
+            AnimationBarGridSplitter.Height = new GridLength(5);
+            AnimationBar.Height = new GridLength(1, GridUnitType.Star);
             AnimationOn();
         }
 
         public void OptionAnimate_Unchecked(object sender = null, RoutedEventArgs e = null)
         {
+            AnimationBarGridSplitter.Height = new GridLength(0);
+            AnimationBar.Height = new GridLength(0);
             AnimationOff();
         }
 
@@ -321,12 +327,12 @@ namespace vrisian
 
         private void AnimationPrev_Click(object sender, RoutedEventArgs e)
         {
-
+            PreviousFrame();
         }
 
         private void AnimationNext_Click(object sender, RoutedEventArgs e)
         {
-
+            NextFrame();
         }
 
         private void AnimationPlay_Click(object sender, RoutedEventArgs e)

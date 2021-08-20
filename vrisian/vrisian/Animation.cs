@@ -119,7 +119,7 @@ namespace vrisian
         public void PreviousFrame()
         {
             CurrentSpriteIndex--;
-            CurrentSpriteIndex %= Frames.Count;
+            if (CurrentSpriteIndex < 0) { CurrentSpriteIndex = Frames.Count - 1; }
         }
 
         public void NextFrame()

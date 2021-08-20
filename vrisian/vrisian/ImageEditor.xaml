@@ -26,8 +26,8 @@
         <Grid Grid.RowSpan="3" Grid.ColumnSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*"/>
-                <RowDefinition Name="AnimationBarGridSplitter" Height="5"/>
-                <RowDefinition Name="AnimationBar" Height="*"/>
+                <RowDefinition Name="AnimationBarGridSplitter" Height="0"/>
+                <RowDefinition Name="AnimationBar" Height="0"/>
             </Grid.RowDefinitions>
             <ScrollViewer Name="CanvasScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <Border x:Name="Border" Background="#00FFFFFF" PreviewMouseWheel="ZoomBorder_PreviewMouseWheel">
@@ -91,6 +91,9 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
+
+            <Image Name="PalletteViewer" Margin="10"/>
+
             <xctk:ColorPicker Name="ColorPicker" Grid.Column="1" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged"
                         ShowTabHeaders="False"  ColorMode="ColorCanvas" ShowDropDownButton="False"/>
             <Image x:Name="SelectedColorViewer" Grid.Column="1" IsHitTestVisible="False"/>
