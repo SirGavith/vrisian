@@ -16,25 +16,30 @@ namespace vrisian
 
             new CustomCommand(Key.O, ModifierKeys.Control,
                 (object sender, ExecutedRoutedEventArgs e) => ButtonOpen_Click()
+            ).Register();
+
+            ImageEditorCommands.Add(
+                new CustomCommand(Key.R, ModifierKeys.Control,
+                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.Refresh())
             );
 
-            new CustomCommand(Key.N, ModifierKeys.Control,
-                (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.AddNewFrame(),
-                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
+            ImageEditorAnimationCommands.Add(
+                new CustomCommand(Key.N, ModifierKeys.Control,
+                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.AddNewFrame()),
+                new CustomCommand(Key.Left, ModifierKeys.None,
+                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.NextFrame()),
+                new CustomCommand(Key.T, ModifierKeys.Control,
+                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.PreviousFrame())
             );
-            new CustomCommand(Key.R, ModifierKeys.Control,
-                (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.Refresh(),
-                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image)
-            );
-            new CustomCommand(Key.Left, ModifierKeys.None,
-                (object sender, ExecutedRoutedEventArgs e) => { EditorManager.Current.NextFrame(); },
-                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
-            );
-            new CustomCommand(Key.T, ModifierKeys.Control, 
-                (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.PreviousFrame(), 
-                (object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = EditorManager.IsCurrent(Editors.Image) && EditorManager.Current.ShouldAnimate
-            );
+
         }
+
+        public CustomCommandManager ImageEditorCommands = new CustomCommandManager();
+        public CustomCommandManager ImageEditorAnimationCommands = new CustomCommandManager();
+
+        public CustomCommandManager TextEditorCommands = new CustomCommandManager();
+
+
 
         public EditorManager EditorManager = new EditorManager();
 

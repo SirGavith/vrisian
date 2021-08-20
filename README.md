@@ -10,8 +10,6 @@ The word `vrisian` is completely made-up, by the way.
 
 ### Bugs
  - Zooming in the Image Editor does not go to the middle / mouse like it should
- - Editors are not closing like they should be sometimes causing an exception to program close
- - You can try to open a folder as a file lol
 
 ### General
  - New files (gui)
@@ -55,8 +53,3 @@ The word `vrisian` is completely made-up, by the way.
  - Tool options (size)
  - Pallette
  - Image Copy/Paste
- - Image Animation
-   - Edit mcmeta for new frame ( only if "frames" is specified)
-   - Frametime editor
-   - Interpolate option
-   - Preview animation

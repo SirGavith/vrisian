@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,10 +25,6 @@ namespace vrisian
             InitializeComponent();
             OpenEditor(file);
         }
-        //public TextEditor()
-        //{
-        //    InitializeComponent();
-        //}
 
         public void OpenEditor(DirectoryItem file)
         {
@@ -38,6 +35,8 @@ namespace vrisian
             Flow.Blocks.Add(new Paragraph(new Run(text)));
 
             FD = Flow;
+
+            Utils.Window.TextEditorCommands.Register();
         }
 
         public void CloseEditor()
@@ -47,6 +46,7 @@ namespace vrisian
                 TextRange range = new TextRange(Textbox.Document.ContentStart, Textbox.Document.ContentEnd);
                 range.Save(fileStream, DataFormats.Text);
             }
+            Utils.Window.TextEditorCommands.Deregister();
         }
 
         public void SetZoom(double zoom, bool mousecentered)
@@ -63,8 +63,6 @@ namespace vrisian
         }
 
         public void Refresh() { }
-
-        public void OnMouseTrigger(object s, MouseEventArgs e) { }
 
         public void PreviousFrame() { }
 

@@ -16,7 +16,6 @@ namespace vrisian
         public Editors Type { get; } = Editors.Image;
 
         public DirectoryItem OpenFile;
-        private List<CustomCommand> Commands = new List<CustomCommand>() { };
 
         public ByteImage Img;
 
@@ -55,9 +54,7 @@ namespace vrisian
 
             Img = new ByteImage(file.FullPath);
 
-            Commands.Add(new CustomCommand(Key.W, ModifierKeys.Control,
-                (object sender, ExecutedRoutedEventArgs e) => MessageBox.Show("triggered")
-            ));
+            Utils.Window.ImageEditorCommands.Register();
 
             //look for .mcmeta
             if (File.Exists(OpenFile.FullPath + ".mcmeta"))
@@ -118,7 +115,7 @@ namespace vrisian
         {
             Img.Save();
             Anim?.SaveMCMeta();
-            Commands.ForEach((CustomCommand C) => C.Remove());
+            Utils.Window.ImageEditorCommands.Deregister();
         }
 
         public void OnMouseTrigger(object s, MouseEventArgs e)
@@ -221,6 +218,8 @@ namespace vrisian
                 OptionAnimate.IsChecked = false;
                 return;
             }
+            Utils.Window.ImageEditorAnimationCommands.Register();
+
             SetAnimationBar();
             Refresh();
         }
@@ -228,6 +227,8 @@ namespace vrisian
         public void AnimationOff()
         {
             ShouldAnimate = false;
+
+            Utils.Window.ImageEditorAnimationCommands.Deregister();
 
             Refresh();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -24,6 +25,12 @@ namespace vrisian
             
             //TODO: multiple editors
             EditorManager.CloseCurrent();
+
+            if (File.GetAttributes(selectedItem.FullPath).HasFlag(FileAttributes.Directory))
+            {
+                //File is Directory
+                return;
+            }
 
             string[] TextEditorFormats = new string[] { "txt", "json", "mcmeta" };
             string[] ImageEditorFormats = new string[] { "png" };

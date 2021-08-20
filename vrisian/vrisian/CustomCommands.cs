@@ -28,11 +28,29 @@ namespace vrisian
             var r = new RoutedCommand();
             r.InputGestures.Add(I);
             C = new CommandBinding(r, execute, canExecute);
-            Register();
         }
 
         public void Register() => Utils.Window?.CommandBindings.Add(C);
 
-        public void Remove() => Utils.Window?.CommandBindings.Remove(C);
+        public void Deregister() => Utils.Window?.CommandBindings.Remove(C);
+    }
+
+    public class CustomCommandManager
+    {
+        private readonly List<CustomCommand> Commands = new List<CustomCommand> { };
+
+        public void Add(params CustomCommand[] list)
+        {
+            for (int i = 0; i < list.Length; i++)
+            {
+                Commands.Add(list[i]);
+            }
+        }
+
+        
+
+        public void Register() => Commands.ForEach(C => C.Register());
+
+        public void Deregister() => Commands.ForEach(C => C.Deregister());
     }
 }
