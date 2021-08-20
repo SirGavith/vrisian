@@ -106,16 +106,11 @@ namespace vrisian
             Refresh();
         }
 
-        public void LoadAsAnimation()
-        {
-            Anim = new Animation(Img, OpenFile);
-        }
-
         public void CloseEditor()
         {
             Img.Save();
             Anim?.SaveMCMeta();
-            Utils.Window.ImageEditorCommands.Deregister();
+            Utils.Window?.ImageEditorCommands.Deregister();
         }
 
         public void OnMouseTrigger(object s, MouseEventArgs e)
@@ -209,7 +204,16 @@ namespace vrisian
 
             try
             {
-                LoadAsAnimation();
+                Anim = new Animation(Img, OpenFile);
+                if (!Anim.MCMetaExists)
+                {
+                    Anim = new Animation(Img, new AnimationMCMeta()) { MCMetaPath = OpenFile.FullPath + ".mcmeta" };
+                    if (!AnimationOptions_Open())
+                    {
+                        OptionAnimate.IsChecked = false;
+                        return;
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -218,7 +222,8 @@ namespace vrisian
                 OptionAnimate.IsChecked = false;
                 return;
             }
-            Utils.Window.ImageEditorAnimationCommands.Register();
+
+    Utils.Window.ImageEditorAnimationCommands.Register();
 
             SetAnimationBar();
             Refresh();
@@ -324,8 +329,6 @@ namespace vrisian
             MessageBox.Show("Custom Command Executed");
         }
 
-
-
         private void AnimationPrev_Click(object sender, RoutedEventArgs e)
         {
             PreviousFrame();
@@ -341,30 +344,34 @@ namespace vrisian
             var Dialog = new AnimationViewerDialog(Anim);
             Dialog.ShowDialog();
         }
-
-        private void AnimationOptions_Click(object sender, RoutedEventArgs e)
+        private bool AnimationOptions_Open()
         {
-            var AnimCopy = Anim.Copy();
-
+            Animation AnimCopy = null;
+            if (Anim.IsSet) { AnimCopy = Anim.Copy(); }
+            
             var Dialog = new AnimationOptionsDialog(Anim);
             bool? Result = Dialog.ShowDialog();
             if (Result == true)
             {
-                //Anim.Interpolate = (bool)Dialog.OptionInterpolate.IsChecked;
-                //Anim.SpriteSizeRatio = XY.Parse(Dialog.OptionWidth.Text, Dialog.OptionHeight.Text);
-                //Anim.FrameTime = int.Parse(Dialog.FrameTime.Text);
-                //int i = 0;
-                //foreach (AnimationFrameGrid G in Dialog.FrameList.Children)
-                //{
-                //    Anim.Frames[i] = new AnimationFrame() { Index = int.Parse(G.FrameIndex.Text), Time = int.Parse(G.FrameTime.Text) };
-                //    i++;
-                //}
                 Anim.SaveMCMeta();
             }
             else
             {
-                Anim = AnimCopy;
+                if (AnimCopy == null)
+                {
+                    return false;
+                } 
+                else
+                {
+                    Anim = AnimCopy;
+                }
             }
+            return true;
+        }
+
+        private void AnimationOptions_Click(object sender = null, RoutedEventArgs e = null)
+        {
+            AnimationOptions_Open();
         }
     }
 }

@@ -46,7 +46,7 @@ namespace vrisian
                 TextRange range = new TextRange(Textbox.Document.ContentStart, Textbox.Document.ContentEnd);
                 range.Save(fileStream, DataFormats.Text);
             }
-            Utils.Window.TextEditorCommands.Deregister();
+            Utils.Window?.TextEditorCommands.Deregister();
         }
 
         public void SetZoom(double zoom, bool mousecentered)

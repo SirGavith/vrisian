@@ -16,20 +16,29 @@ namespace vrisian
 
             Anim = A;
 
-            Viewer.Play(Anim);
+            if (Anim.IsSet) { Viewer.Play(Anim); }
+            
 
             OptionInterpolate.IsChecked = Anim.Interpolate;
             FrameTime.Text = Anim.FrameTime.ToString();
             OptionWidth.Text = Anim.SpriteSizeRatio.X.ToString();
             OptionHeight.Text = Anim.SpriteSizeRatio.Y.ToString();
-            foreach (AnimationFrame Frame in Anim.Frames)
+            UpdateFrames();
+        }
+
+        private void UpdateFrames()
+        {
+            FrameList.Children.Clear();
+            Anim.Frames.ForEach(F => AddFrame(F));
+        }
+
+        private void AddFrame(AnimationFrame F)
+        {
+            if (Anim.FrameTime != F.Time)
             {
-                if (Anim.FrameTime != Frame.Time)
-                {
-                    OptionAdvanced.IsChecked = true;
-                }
-                FrameList.Children.Add(GetFrameGrid(Anim, Frame));
+                OptionAdvanced.IsChecked = true;
             }
+            FrameList.Children.Add(GetFrameGrid(Anim, F));
         }
 
         private AnimationFrameGrid GetFrameGrid(Animation Anim, AnimationFrame Frame)
@@ -66,17 +75,21 @@ namespace vrisian
 
         private void FrameTime_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Anim.FrameTime = int.Parse(FrameTime.Text);
-            int i = 0;
-            foreach (AnimationFrameGrid G in FrameList.Children)
+            try
             {
-                if (G.FrameTimeDefault.IsChecked == true)
+                Anim.FrameTime = int.Parse(FrameTime.Text);
+                int i = 0;
+                foreach (AnimationFrameGrid G in FrameList.Children)
                 {
-                    G.FrameTime.Text = FrameTime.Text;
+                    if (G.FrameTimeDefault.IsChecked == true)
+                    {
+                        G.FrameTime.Text = FrameTime.Text;
+                    }
+                    Anim.Frames[i] = new AnimationFrame() { Index = int.Parse(G.FrameIndex.Text), Time = int.Parse(G.FrameTime.Text) };
+                    i++;
                 }
-                Anim.Frames[i] = new AnimationFrame() { Index = int.Parse(G.FrameIndex.Text), Time = int.Parse(G.FrameTime.Text) };
-                i++;
             }
+            catch (Exception) { }
         }
 
         private void OptionInterpolate_Checked(object sender, RoutedEventArgs e)
@@ -110,6 +123,12 @@ namespace vrisian
                 Anim.SpriteSizeRatio = XY.Parse(OptionWidth.Text, OptionHeight.Text);
             }
             catch (Exception) { }
+        }
+
+        private void NewFrameButton_Click(object sender, RoutedEventArgs e)
+        {
+            Anim.AddNewFrame();
+            UpdateFrames();
         }
     }
 }

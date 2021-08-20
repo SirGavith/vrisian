@@ -12,10 +12,13 @@ The word `vrisian` is completely made-up, by the way.
  - Zooming in the Image Editor does not go to the middle / mouse like it should
 
 ### General
- - New files (gui)
- - Rename files (gui)
- - Delete files (gui)
- - Moving files (gui)
+ - Redo the FileTree
+   - It does not update live
+   - Add renaming files
+   - Add file addition
+   - Add file deletion
+   - Add file moving
+
  - Export menu
    - Options
      - Scaled up (Gif of animations )

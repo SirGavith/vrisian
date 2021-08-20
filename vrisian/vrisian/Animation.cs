@@ -13,10 +13,12 @@ namespace vrisian
         public ByteImage SourceImage { get; set; }
         public List<AnimationFrame> Frames { get; set; } = new List<AnimationFrame> { };
         public int CurrentSpriteIndex { get; set; }
+        public bool IsSet = false;
 
         public bool Interpolate { get; set; }
         public int FrameTime { get; set; }
         public string MCMetaPath {get; set;}
+        public bool MCMetaExists => File.Exists(MCMetaPath);
 
         public XY SpriteSize => new XY(SourceImage.Width, SourceImage.Width * SpriteSizeRatio.Y / SpriteSizeRatio.X);
         public int SpriteCount { get; private set; }
@@ -35,17 +37,19 @@ namespace vrisian
         }
         public Animation(ByteImage img, AnimationMCMeta mcmeta)
         {
-            Constructor(img, mcmeta);
+            ParseMCMeta(img, mcmeta);
         }
         public Animation(ByteImage img, DirectoryItem file)
         {
             MCMetaPath = file.FullPath + ".mcmeta";
-            string jsonText = File.ReadAllText(file.FullPath + ".mcmeta").RemoveWhitespace();
-            
-            Constructor(img, JsonSerializer.Deserialize<AnimationFile>(jsonText).Animation);
+            if (!MCMetaExists) { return; }
+
+            string jsonText = File.ReadAllText(file.FullPath + ".mcmeta");
+            if (string.IsNullOrEmpty(jsonText)) { return; }
+            ParseMCMeta(img, JsonSerializer.Deserialize<AnimationFile>(jsonText).Animation);
         }
 
-        private void Constructor(ByteImage img, AnimationMCMeta mcmeta)
+        private void ParseMCMeta(ByteImage img, AnimationMCMeta mcmeta)
         {
             SourceImage = img;
             Interpolate = mcmeta.Interpolate;
@@ -68,35 +72,30 @@ namespace vrisian
                 {
                     Frames.Add(new AnimationFrame() { Index = i, Time = FrameTime });
                 }
-                return;
             }
-
-            JsonElement JsonFrames = (JsonElement)mcmeta.JsonFrames;
-
-            foreach (var f in JsonFrames.EnumerateArray())
+            else
             {
-                if (f.ValueKind == JsonValueKind.Number)
+                JsonElement JsonFrames = (JsonElement)mcmeta.JsonFrames;
+
+                foreach (var f in JsonFrames.EnumerateArray())
                 {
-                    Frames.Add(new AnimationFrame() { Index = f.GetInt32(), Time = FrameTime });
-                }
-                else if (f.ValueKind == JsonValueKind.Object)
-                {
-                    Frames.Add(new AnimationFrame() { Index = f.GetProperty("index").GetInt32(), Time = f.GetProperty("time").GetInt32() });
+                    if (f.ValueKind == JsonValueKind.Number)
+                    {
+                        Frames.Add(new AnimationFrame() { Index = f.GetInt32(), Time = FrameTime });
+                    }
+                    else if (f.ValueKind == JsonValueKind.Object)
+                    {
+                        Frames.Add(new AnimationFrame() { Index = f.GetProperty("index").GetInt32(), Time = f.GetProperty("time").GetInt32() });
+                    }
                 }
             }
+            IsSet = true;
         }
 
-        public void SaveMCMeta()
+        public void SaveMCMeta(string _MCMetaPath = null)
         {
-            SaveMCMeta(MCMetaPath);
-        }
 
-        public void SaveMCMeta(string _MCMetaPath)
-        {
-            if (_MCMetaPath == null)
-            {
-                throw new ArgumentNullException("You must specify a path for the MCMeta");
-            }
+            _MCMetaPath = _MCMetaPath ?? MCMetaPath ?? throw new ArgumentNullException("MCMetaPath must be specified to save the MCMeta");
 
             AnimationMCMetaWrite MCMeta = new AnimationMCMetaWrite()
             {
@@ -134,11 +133,12 @@ namespace vrisian
             {
                 Frames = Frames.ToArray().ToList(),
                 CurrentSpriteIndex = CurrentSpriteIndex,
-                Interpolate = !!Interpolate,
+                Interpolate = Interpolate,
                 FrameTime = FrameTime,
                 MCMetaPath = MCMetaPath,
                 SpriteCount = SpriteCount,
-                SpriteSizeRatio = new XY(SpriteSizeRatio.X, SpriteSizeRatio.Y)
+                SpriteSizeRatio = new XY(SpriteSizeRatio.X, SpriteSizeRatio.Y),
+                IsSet = true
             };
         }
     }
