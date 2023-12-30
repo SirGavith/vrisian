@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -14,62 +15,26 @@ namespace vrisian
         {
             InitializeComponent();
 
-            new CustomCommand(Key.O, ModifierKeys.Control,
-                (object sender, ExecutedRoutedEventArgs e) => ButtonOpen_Click()
-            ).Register();
+            var GlobalShortcuts = new CustomCommandCategory("Global", "These shortcuts can be used anywhere", new List<CustomCommandParent>
+            {
+                new CustomCommand("Open Folder", "Opens the Folder Picker dialog", new KeyGesture(Key.O, ModifierKeys.Control), OpenFolderDialog),
+                new CustomCommand("Open Folder", "Opens the Folder Picker dialog", new KeyGesture(Key.O, ModifierKeys.Control), OpenKeyboardShortcutDialog),
+            });
 
-            ImageEditorCommands.Add(
-                new CustomCommand(Key.R, ModifierKeys.Control,
-                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.Refresh())
-            );
+            GlobalShortcuts.Register();
 
-            ImageEditorAnimationCommands.Add(
-                new CustomCommand(Key.N, ModifierKeys.Control,
-                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.AddNewFrame()),
-                new CustomCommand(Key.Left, ModifierKeys.None,
-                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.NextFrame()),
-                new CustomCommand(Key.T, ModifierKeys.Control,
-                    (object sender, ExecutedRoutedEventArgs e) => EditorManager.Current.PreviousFrame())
-            );
+
+            //new CustomCommand(Key.O, ModifierKeys.Control,
+            //    (object sender, ExecutedRoutedEventArgs e) => ButtonOpen_Click()
+            //);
 
         }
-
-        public CustomCommandManager ImageEditorCommands = new CustomCommandManager();
-        public CustomCommandManager ImageEditorAnimationCommands = new CustomCommandManager();
-
-        public CustomCommandManager TextEditorCommands = new CustomCommandManager();
-
-
 
         public EditorManager EditorManager = new EditorManager();
 
         public double Zoom = 1;
         public double MinZoom = 0.09;
 
-        private void ButtonOpen_Click(object sender = null, RoutedEventArgs e = null)
-        {
-            var dlg = new System.Windows.Forms.FolderBrowserDialog
-            {
-                Description = "Select the folder you want to open"
-            };
-            dlg.ShowDialog();
-            try
-            {
-                var binding = new Binding("SubItems")
-                {
-                    Source = new DirectoryItem { FullPath = dlg.SelectedPath }
-                };
-                var selectedFolder = dlg.SelectedPath.Split('\\');
-                FileTreeItem.Header = selectedFolder[selectedFolder.Length - 1];
-                FileTreeItem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
-                FileTreePathDisplay.Text = dlg.SelectedPath;
-                FileTree.IsEnabled = true;
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("The selection dialog was likely closed");
-            }
-        }
 
         private void Window_Closed(object sender, EventArgs e)
         {
@@ -102,6 +67,41 @@ namespace vrisian
             EditorManager.Current.SetZoom(Zoom, usemousecentered);
 
             zoomLabel.Text = $"{Math.Round(100 * Zoom)}%";
+        }
+
+        private void ButtonOpen_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFolderDialog();
+        }
+
+        private void OpenFolderDialog()
+        {
+            var dlg = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Select the folder you want to open"
+            };
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var selectedFolder = dlg.SelectedPath.Split('\\');
+                FileTreeItem.Header = selectedFolder[selectedFolder.Length - 1];
+                FileTreeItem.SetBinding(ItemsControl.ItemsSourceProperty, 
+                    new Binding("SubItems") { Source = new DirectoryItem { FullPath = dlg.SelectedPath } });
+                FileTreePathDisplay.Text = dlg.SelectedPath;
+                FileTree.IsEnabled = true;
+            }
+        }
+
+        private void OpenKeyboardShortcutsButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void OpenKeyboardShortcutDialog()
+        {
+            foreach (IEditor E in Editor.EditorMappings.Values)
+            {
+                List<CustomCommandParent> C = E.GetCommands();
+            }
         }
     }
 }

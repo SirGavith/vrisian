@@ -11,7 +11,7 @@ namespace vrisian
 {
     public partial class TextEditor : UserControl, IEditor
     {
-        public Editors Type { get; } = Editors.Text;
+        public Editor.Editors Type { get; } = Editor.Editors.Text;
 
         public double Zoom;
         private DirectoryItem OpenFile;
@@ -19,6 +19,8 @@ namespace vrisian
         public string Text { get { return new TextRange(FD.ContentStart, FD.ContentEnd).Text; } }
 
         public int TextLength { get { return Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Length - 1; }}
+
+        public TextEditor() { }
 
         public TextEditor(DirectoryItem file)
         {
@@ -93,6 +95,17 @@ namespace vrisian
                 Utils.CurrentWindow.UpdateZoom(e.Delta > 0 ? 0.2 : -0.2, false);
                 e.Handled = true;
             }
+        }
+
+        public List<CustomCommandParent> GetCommands()
+        {
+            return new List<CustomCommandParent>()
+            {
+                new CustomCommandCategory("Debug", "Commands that are mainly used for Debugging", new List<CustomCommandParent>()
+                {
+                    new CustomCommand("Popup", "Makes a popup", new KeyGesture(Key.P, ModifierKeys.None), ()=>MessageBox.Show("test")),
+                }),
+            };
         }
     }
 }

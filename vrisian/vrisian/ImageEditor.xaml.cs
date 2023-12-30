@@ -7,13 +7,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 //using Xceed.Wpf.Toolkit;
 
-
 namespace vrisian
 {
-
+     
     public partial class ImageEditor : UserControl, IEditor
     {
-        public Editors Type { get; } = Editors.Image;
+        public Editor.Editors Type { get; } = Editor.Editors.Image;
 
         public DirectoryItem OpenFile;
 
@@ -223,7 +222,7 @@ namespace vrisian
                 return;
             }
 
-    Utils.Window.ImageEditorAnimationCommands.Register();
+            Utils.Window.ImageEditorAnimationCommands.Register();
 
             SetAnimationBar();
             Refresh();
@@ -372,6 +371,24 @@ namespace vrisian
         private void AnimationOptions_Click(object sender = null, RoutedEventArgs e = null)
         {
             AnimationOptions_Open();
+        }
+
+        public List<CustomCommandParent> GetCommands()
+        {
+            return new List<CustomCommandParent>()
+            {
+                new CustomCommandCategory("Debug", "Commands that are mainly used for Debugging", new List<CustomCommandParent>()
+                {
+                    new CustomCommand("Refresh Image", "Refreshed the current Image", new KeyGesture(Key.R, ModifierKeys.Control), Refresh),
+                }),
+
+                new CustomCommandCategory("Animation", "Commands that relate to Animation", new List<CustomCommandParent>()
+                {
+                    new CustomCommand("Previous Frame", "Jumps to the Previous Frame", new KeyGesture(Key.Left, ModifierKeys.None), PreviousFrame),
+                    new CustomCommand("Next Frame", "Jumps to the Next Frame", new KeyGesture(Key.Right, ModifierKeys.None), NextFrame),
+                    new CustomCommand("New Frame", "Adds a new Frame to the end of the Current Animation", new KeyGesture(Key.N, ModifierKeys.Alt), AddNewFrame),
+                })
+            };
         }
     }
 }

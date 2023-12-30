@@ -40,6 +40,15 @@
                 <MenuItem Header="_Close"/>
                 <MenuItem Header="_Save"/>
             </MenuItem>
+            <MenuItem Header="_Options">
+                <MenuItem Header="_Keyboard Shortcuts" Name="OpenKeyboardShortcutsButton" Click="OpenKeyboardShortcutsButton_Click"  InputGestureText="Ctrl+/"/>
+
+            </MenuItem>
+            <MenuItem Header="_Export">
+                <MenuItem Header="_Copy to Clipboard"  InputGestureText="Ctrl+C"/>
+                <MenuItem Header="_Copy to Clipboard"  InputGestureText="Ctrl+C"/>
+                <MenuItem Header="_Copy to Clipboard"  InputGestureText="Ctrl+C"/>
+            </MenuItem>
         </Menu>
         
         
@@ -63,11 +72,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="FileTreePathDisplay" TextWrapping="Wrap" Text="Open a Folder to Display" Grid.Row="0" Height="20"/>
-            <ScrollViewer CanContentScroll="True" Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <TreeView Name="FileTree" IsEnabled="False" SelectedItemChanged="FileTree_SelectedItemChanged">
-                    <TreeViewItem Name="FileTreeItem" Header=""/>
-                </TreeView>
-            </ScrollViewer>
+            
         </Grid>
         <!--Middle Panel-->
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Margin="0" Grid.Row="1" IsTabStop="False"/>

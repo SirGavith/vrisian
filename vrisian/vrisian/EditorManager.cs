@@ -23,7 +23,7 @@ namespace vrisian
            
         }
 
-        public bool IsCurrent(Editors type) => CurrentEditor.Type == type;
+        public bool IsCurrent(Editor.Editors type) => CurrentEditor.Type == type;
 
         public void CloseCurrent()
         {
@@ -44,25 +44,27 @@ namespace vrisian
 
     public interface IEditor
     {
-        Editors Type { get; }
+        Editor.Editors Type { get; }
 
         void OpenEditor(DirectoryItem file);
         void CloseEditor();
-
-        void Refresh();
         void SetZoom(double Zoom, bool mousecentered);
 
-        void PreviousFrame();
-        void NextFrame();
-        void AddNewFrame();
-
-        bool ShouldAnimate { get; }
-        bool ShouldTile { get; }
+        List<CustomCommandParent> GetCommands();
     }
 
-    public enum Editors
+    public static class Editor
     {
-        Text,
-        Image
+        public static readonly Dictionary<Editors, IEditor> EditorMappings = new Dictionary<Editors, IEditor>()
+        {
+            { Editors.Image, new ImageEditor() },
+            { Editors.Text, new TextEditor() },
+        };
+
+        public enum Editors
+        {
+            Text,
+            Image
+        }
     }
 }
